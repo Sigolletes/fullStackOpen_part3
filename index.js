@@ -28,6 +28,8 @@ let persons = [
 
 app.use(express.json())
 
+app.use(express.static('build'))
+
 app.use(cors())
 
 morgan.token("info", (req, res) => {
