@@ -103,10 +103,10 @@ app.post('/api/persons', (request, response) => {
   }
 
   const person = {
+    id: generateId(),
     name: body.name,
     number: body.number,
-    date: new Date(),
-    id: generateId()
+    date: new Date()
   }
 
   persons = persons.concat(person)
