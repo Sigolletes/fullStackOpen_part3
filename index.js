@@ -2,6 +2,7 @@ const express = require('express')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
+const Person = require('./models/person')
 
 let persons = [
   { 
@@ -65,14 +66,9 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(p => p.id === id)
-
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 const generateId = () => {
@@ -86,21 +82,19 @@ const generateId = () => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  if (!body.name) {
-    return response.status(400).json({ 
-      error: 'Name missing' 
-    })
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
   }
-  if (!body.number) {
-    return response.status(400).json({ 
-      error: 'Number missing' 
-    })
-  }
-  if (persons.some(p => p.name === body.name)) {
-    return response.status(400).json({ 
-      error: 'This name already exists in the phonebook' 
-    })
-  }
+
+  const person = new Person({
+    content: body.content,
+    important: body.important || false,
+  })
+
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
+})
 
   const person = {
     id: generateId(),
