@@ -61,25 +61,25 @@ app.get('/info', (req, res) => {
   res.send(`<h1>INFORMATION</h1><p>Phonebook has info for ${persons.length} people</p><p>${time}</p>`)
 })
 
-app.get('/api/persons', (req, res) => {
-  res.json(persons)
+app.get('/api/people', (req, res) => {
+  res.json(people)
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/people/:id', (request, response) => {
   Person.findById(request.params.id).then(person => {
     response.json(person)
   })
 })
 
-const generateId = () => {
+/* const generateId = () => {
   let num
   do {
     num = Math.floor(Math.random() * 10000)
   } while (persons.some(p => p.id === num))
   return num
-}
+} */
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/people', (request, response) => {
   const body = request.body
 
   if (body.content === undefined) {
@@ -87,8 +87,9 @@ app.post('/api/persons', (request, response) => {
   }
 
   const person = new Person({
-    content: body.content,
-    important: body.important || false,
+    name: body.name,
+    number: body.number,
+    date: new Date()
   })
 
   person.save().then(savedPerson => {
@@ -96,21 +97,9 @@ app.post('/api/persons', (request, response) => {
   })
 })
 
-  const person = {
-    id: generateId(),
-    name: body.name,
-    number: body.number,
-    date: new Date()
-  }
-
-  persons = persons.concat(person)
-
-  response.json(person)
-})
-
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/people/:id', (request, response) => {
   const id = Number(request.params.id)
-  persons = persons.filter(p => p.id !== id)
+  people = people.filter(p => p.id !== id)
 
   response.status(204).end()
 })
